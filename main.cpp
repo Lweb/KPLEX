@@ -22,11 +22,11 @@ using namespace std;
 
 typedef long long ll;
 
-const int MaxN = 15000;
+const int MaxN = 15000; // maximum number of the vertices
 
-const int MaxM = 1200000;
+const int MaxM = 1200000; // maximum number of the edges
 
-const int Maxn = 1100;
+const int Maxn = 1100; // maximum number of the vertices after the reduction
 
 int N, M, K;
 
