@@ -42,11 +42,11 @@ void read() {
 
 int DEG[MaxN], head[MaxN], nxt[MaxM], to[MaxM], ecnt;
 
-int que[MaxN], nV[MaxN];
+int que[MaxN], nV[MaxN], oriID[Maxn];
 
 bool outcore[MaxN];
 
-int degree[Maxn], dominate[Maxn], n;
+int degree[Maxn], n;
 
 bitset <Maxn> Graph[Maxn];
 
@@ -54,14 +54,6 @@ void addedge(int *h, int v) {
     nxt[ecnt] = *h;
     to[ecnt] = v;
     *h = ecnt ++;
-}
-
-inline bool checkdominate(int u, int v) {
-    if(Graph[u] == Graph[v]) return u > v;
-    bitset <Maxn> tmp = Graph[u];
-    tmp.set(u);
-    tmp &= Graph[v];
-    return tmp == Graph[v];
 }
 
 bool del[Maxn], ins[Maxn];
@@ -104,12 +96,11 @@ bool PreProcess(int S) {
     n = 0;
     for(int i = 0; i < N; ++ i) {
         if(!outcore[i])
-            nV[i] = n ++;
+            nV[i] = n, oriID[n++] = i;
     }
     if(n < S) return false;
     for(int i = 0; i < n; ++ i) Graph[i].reset();
     memset(head, -1, n * sizeof(int));
-    memset(dominate, -1, n * sizeof(int));
     memset(degree, 0, n * sizeof(int));
     ecnt = 0;
     for(int i = 0; i < M; ++ i) {
@@ -121,14 +112,6 @@ bool PreProcess(int S) {
         addedge(head + v, u);
         Graph[u].set(v);
         Graph[v].set(u);
-    }
-    for(int i = 0; i < n; ++ i) {
-        for(int j = i + 1; j < n; ++ j) {
-            if(checkdominate(i, j))
-                addedge(dominate + i, j);
-            if(checkdominate(j, i))
-                addedge(dominate + j, i);
-        }
     }
     delvex.clear(); svex.clear();
     memset(ins, 0, n * sizeof(bool));
@@ -322,20 +305,6 @@ bool dfs(int curS) {
         }
     }
     set <int> sofar;
-    for(auto u : delvex) {
-        for(int e = dominate[u]; ~e; e = nxt[e]) {
-            int v = to[e];
-            if(del[v]) continue;
-            if(ins[v]) return false;
-            sofar.insert(v);
-        }
-    }
-    if(sofar.size()) {
-        for(auto x : sofar) delfrD(x);
-        bool ret = dfs(curS - sofar.size());
-        for(auto x : sofar) addtoD(x);
-        return ret;
-    }
     for(auto u : svex) {
         bfs(u);
         for(int v = 0; v < n; ++ v) if(!del[v]) {
